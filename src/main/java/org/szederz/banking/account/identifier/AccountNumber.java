@@ -1,6 +1,8 @@
-package org.szederz.banking.account;
+package org.szederz.banking.account.identifier;
 
-public class AccountNumber {
+import org.szederz.banking.AccountIdentifier;
+
+public class AccountNumber implements AccountIdentifier {
   private final int part1;
   private final int part2;
   private final int part3;

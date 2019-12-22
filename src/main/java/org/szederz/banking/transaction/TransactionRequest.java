@@ -1,19 +1,19 @@
-package org.szederz.banking;
+package org.szederz.banking.transaction;
 
-import org.szederz.banking.account.AccountNumber;
+import org.szederz.banking.account.identifier.AccountNumber;
 import org.szederz.banking.currency.Currency;
 
-public class Transaction {
+public class TransactionRequest {
   private Currency amount;
   private AccountNumber donorAccountNumber;
   private AccountNumber recipientAccountNumber;
 
-  public Transaction ofAmount(Currency amount) {
+  public TransactionRequest ofAmount(Currency amount) {
     this.amount = amount;
     return this;
   }
 
-  public Transaction fromAccountNumber(AccountNumber donorAccountNumber) {
+  public TransactionRequest fromAccountNumber(AccountNumber donorAccountNumber) {
     this.donorAccountNumber = donorAccountNumber;
     return this;
   }
@@ -26,7 +26,7 @@ public class Transaction {
     return this.recipientAccountNumber;
   }
 
-  public Transaction toAccountNumber(AccountNumber recipientAccountNumber) {
+  public TransactionRequest toAccountNumber(AccountNumber recipientAccountNumber) {
     this.recipientAccountNumber = recipientAccountNumber;
     return this;
   }

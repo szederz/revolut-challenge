@@ -20,4 +20,9 @@ public class LocalCurrency implements Currency {
   public Currency minus(Currency currency) {
     return new LocalCurrency(this.amount - currency.getAmount());
   }
+
+  @Override
+  public boolean isLessThan(Currency currency) {
+    return amount < currency.getAmount();
+  }
 }
