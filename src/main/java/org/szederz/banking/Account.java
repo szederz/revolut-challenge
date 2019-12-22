@@ -3,7 +3,7 @@ package org.szederz.banking;
 import org.szederz.banking.currency.Currency;
 
 public interface Account {
-  AccountIdentifier getAccountIdentifier();
+  AccountIdentifier getAccountId();
 
   Currency getBalance();
 

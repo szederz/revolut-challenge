@@ -1,45 +1,41 @@
 package org.szederz.banking.account;
 
 import org.szederz.banking.Account;
-import org.szederz.banking.account.identifier.AccountNumber;
+import org.szederz.banking.AccountIdentifier;
+import org.szederz.banking.Versionable;
 import org.szederz.banking.currency.Currency;
-import org.szederz.banking.currency.LocalCurrency;
 
-public class LocalAccount implements Account {
-  private AccountNumber accountNumber;
+public class LocalAccount implements Account, Versionable {
+  private AccountIdentifier accountId;
   private Currency balance;
+  private long version = 0L;
 
-  public LocalAccount(AccountNumber accountNumber) {
-    this(accountNumber, new LocalCurrency(0));
-  }
-
-  public LocalAccount(AccountNumber accountNumber, Currency balance) {
-    this.accountNumber = accountNumber;
+  public LocalAccount(AccountIdentifier accountId, Currency balance) {
+    this.accountId = accountId;
     this.balance = balance;
   }
 
-  public AccountNumber getAccountIdentifier() {
-    return accountNumber;
+  public AccountIdentifier getAccountId() {
+    return accountId;
   }
 
   @Override
-  public Account withdraw(Currency amount) {
-    return new LocalAccount(accountNumber, balance.minus(amount));
+  public LocalAccount withdraw(Currency amount) {
+    return new LocalAccount(accountId, balance.minus(amount));
   }
 
   @Override
-  public Account deposit(Currency amount) {
-    return new LocalAccount(accountNumber, balance.plus(amount));
-  }
-
-  public LocalAccount withBalance(Currency balance) {
-    this.balance = balance;
-
-    return this;
+  public LocalAccount deposit(Currency amount) {
+    return new LocalAccount(accountId, balance.plus(amount));
   }
 
   @Override
   public Currency getBalance() {
     return balance;
+  }
+
+  @Override
+  public long getVersion() {
+    return version;
   }
 }

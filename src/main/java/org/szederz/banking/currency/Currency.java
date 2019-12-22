@@ -8,4 +8,6 @@ public interface Currency {
   Currency plus(Currency currency);
 
   boolean isLessThan(Currency currency);
+
+  boolean equals(Currency currency);
 }

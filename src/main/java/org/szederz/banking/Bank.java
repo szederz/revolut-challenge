@@ -1,27 +1,16 @@
 package org.szederz.banking;
 
-import java.util.HashMap;
-import java.util.Map;
+import org.szederz.banking.transaction.TransactionCode;
+
+import java.util.List;
 import java.util.Optional;
-import java.util.stream.Stream;
 
-public class Bank {
-  private Map<AccountIdentifier, Account> accounts = new HashMap<>();
+public interface Bank<ACCOUNT extends Account> {
+  void saveAccounts(ACCOUNT... accounts);
 
+  TransactionCode saveAccount(ACCOUNT account);
 
-  public void saveAccounts(Account... accounts) {
-    Stream.of(accounts)
-      .forEach(this::saveAccount);
-  }
+  Optional<List<ACCOUNT>> getAccounts(AccountIdentifier... identifiers);
 
-  public void saveAccount(Account account) {
-    this.accounts.put(account.getAccountIdentifier(), account);
-  }
-
-  public Optional<Account> getAccount(AccountIdentifier identifier) {
-    if (accounts.containsKey(identifier)) {
-      return Optional.of(accounts.get(identifier));
-    }
-    return Optional.empty();
-  }
+  Optional<ACCOUNT> getAccount(AccountIdentifier identifier);
 }

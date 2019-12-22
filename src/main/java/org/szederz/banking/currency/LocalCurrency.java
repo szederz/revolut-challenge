@@ -25,4 +25,17 @@ public class LocalCurrency implements Currency {
   public boolean isLessThan(Currency currency) {
     return amount < currency.getAmount();
   }
+
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) return true;
+    if (o instanceof Currency) return this.equals((LocalCurrency) o);
+
+    return false;
+  }
+
+  @Override
+  public boolean equals(Currency currency) {
+    return amount == currency.getAmount();
+  }
 }
