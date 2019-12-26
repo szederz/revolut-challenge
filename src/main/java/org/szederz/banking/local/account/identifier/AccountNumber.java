@@ -2,19 +2,7 @@ package org.szederz.banking.local.account.identifier;
 
 import org.szederz.banking.AccountId;
 
-import java.util.Random;
-
 public class AccountNumber implements AccountId {
-  private final static Random RANDOM = new Random();
-
-  public static AccountNumber random() {
-    return new AccountNumber(nextPart(), nextPart(), nextPart());
-  }
-
-  private static int nextPart() {
-    return RANDOM.nextInt(100000000);
-  }
-
   private final int part1;
   private final int part2;
   private final int part3;

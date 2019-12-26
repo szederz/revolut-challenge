@@ -1,6 +1,6 @@
-package org.szederz.banking;
+package org.szederz.banking.local;
 
-import org.szederz.banking.local.LocalBank;
+import org.szederz.banking.AccountId;
 import org.szederz.banking.local.account.LocalAccount;
 import org.szederz.banking.local.account.currency.LocalCurrency;
 import org.szederz.banking.local.account.identifier.AccountNumber;

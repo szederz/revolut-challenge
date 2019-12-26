@@ -3,9 +3,9 @@ package org.szederz.banking.local;
 import org.szederz.banking.Account;
 import org.szederz.banking.AccountId;
 import org.szederz.banking.Bank;
-import org.szederz.banking.local.account.LocalAccount;
 import org.szederz.banking.collections.Pair;
 import org.szederz.banking.interactor.ResponseCode;
+import org.szederz.banking.local.account.LocalAccount;
 
 import java.util.*;
 import java.util.stream.Collectors;

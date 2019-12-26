@@ -1,17 +1,19 @@
-package org.szederz.banking;
+package org.szederz.banking.local;
 
 import org.junit.jupiter.api.Test;
-import org.szederz.banking.local.account.LocalAccount;
-import org.szederz.banking.local.account.identifier.AccountNumber;
-import org.szederz.banking.local.account.currency.LocalCurrency;
+import org.szederz.banking.Account;
 import org.szederz.banking.interactor.ResponseCode;
+import org.szederz.banking.local.account.LocalAccount;
+import org.szederz.banking.local.account.currency.LocalCurrency;
+import org.szederz.banking.local.account.identifier.AccountNumber;
 
 import static java.util.Arrays.asList;
-import static org.junit.jupiter.api.Assertions.*;
-import static org.szederz.banking.BankTestHelper.ACCOUNT_NUMBER_1;
-import static org.szederz.banking.BankTestHelper.ACCOUNT_NUMBER_2;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.szederz.banking.asserts.AccountAsserts.assertBalanceOfAccount;
 import static org.szederz.banking.interactor.ResponseCode.REENTER_LAST_TRANSACTION;
+import static org.szederz.banking.local.BankTestHelper.ACCOUNT_NUMBER_1;
+import static org.szederz.banking.local.BankTestHelper.ACCOUNT_NUMBER_2;
 
 class LocalBankTest {
   private BankTestHelper helper = new BankTestHelper();
@@ -148,7 +150,7 @@ class LocalBankTest {
     public int hashCode() {
       try {
         Thread.sleep(0, 5);
-      } catch (InterruptedException e) {
+      } catch(InterruptedException e) {
         e.printStackTrace();
       }
       return super.hashCode();

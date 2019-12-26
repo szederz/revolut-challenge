@@ -7,10 +7,10 @@ import org.szederz.banking.local.account.LocalAccount;
 import org.szederz.banking.local.account.currency.LocalCurrency;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.szederz.banking.BankTestHelper.ACCOUNT_NUMBER_1;
-import static org.szederz.banking.BankTestHelper.ACCOUNT_NUMBER_2;
 import static org.szederz.banking.interactor.ResponseCode.DUPLICATE_TRANSACTION;
 import static org.szederz.banking.interactor.ResponseCode.TRANSACTION_APPROVED;
+import static org.szederz.banking.local.BankTestHelper.ACCOUNT_NUMBER_1;
+import static org.szederz.banking.local.BankTestHelper.ACCOUNT_NUMBER_2;
 
 class OpenAccountInteractorTest {
   private OpenAccountInteractorTestHelper helper = new OpenAccountInteractorTestHelper();

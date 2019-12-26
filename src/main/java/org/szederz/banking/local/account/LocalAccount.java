@@ -2,8 +2,8 @@ package org.szederz.banking.local.account;
 
 import org.szederz.banking.Account;
 import org.szederz.banking.AccountId;
-import org.szederz.banking.local.Versioned;
 import org.szederz.banking.Currency;
+import org.szederz.banking.local.Versioned;
 
 public class LocalAccount implements Account, Versioned {
   private AccountId accountId;

@@ -9,7 +9,8 @@ import java.util.List;
 import java.util.Optional;
 
 import static java.util.Arrays.asList;
-import static org.szederz.banking.interactor.ResponseCode.*;
+import static org.szederz.banking.interactor.ResponseCode.INSUFFICIENT_FUNDS;
+import static org.szederz.banking.interactor.ResponseCode.NO_CREDIT_ACCOUNT;
 
 public class TransferInteractor {
   private final Bank bank;

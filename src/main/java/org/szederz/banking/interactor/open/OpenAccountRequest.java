@@ -3,8 +3,6 @@ package org.szederz.banking.interactor.open;
 import org.szederz.banking.AccountId;
 import org.szederz.banking.Currency;
 
-import java.util.Optional;
-
 public class OpenAccountRequest {
   private Currency balance;
   private AccountId accountId;
