@@ -1,16 +1,17 @@
 package org.szederz.banking;
 
 import org.junit.jupiter.api.Test;
-import org.szederz.banking.account.LocalAccount;
-import org.szederz.banking.currency.LocalCurrency;
-import org.szederz.banking.transaction.TransactionCode;
+import org.szederz.banking.local.account.LocalAccount;
+import org.szederz.banking.local.account.identifier.AccountNumber;
+import org.szederz.banking.local.account.currency.LocalCurrency;
+import org.szederz.banking.interactor.ResponseCode;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
+import static java.util.Arrays.asList;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.szederz.banking.BankTestHelper.ACCOUNT_NUMBER_1;
 import static org.szederz.banking.BankTestHelper.ACCOUNT_NUMBER_2;
 import static org.szederz.banking.asserts.AccountAsserts.assertBalanceOfAccount;
-import static org.szederz.banking.transaction.TransactionCode.REENTER_LAST_TRANSACTION;
+import static org.szederz.banking.interactor.ResponseCode.REENTER_LAST_TRANSACTION;
 
 class LocalBankTest {
   private BankTestHelper helper = new BankTestHelper();
@@ -60,16 +61,97 @@ class LocalBankTest {
   }
 
   @Test
-  void shouldNotSaveStaleObjects() {
+  void shouldNotSaveStaleObject() {
     helper.registerAccount(ACCOUNT_NUMBER_1, 100);
     LocalAccount account = helper.getAccount(ACCOUNT_NUMBER_1);
     LocalAccount staleAccount = helper.getAccount(ACCOUNT_NUMBER_1);
-    helper.localBank.saveAccount(
+    helper.localBank.put(
       account.deposit(new LocalCurrency(1)));
 
-    TransactionCode response = helper.localBank.saveAccount(
+    ResponseCode response = helper.localBank.put(
       staleAccount.deposit(new LocalCurrency(20)));
 
     assertEquals(REENTER_LAST_TRANSACTION, response);
+  }
+
+  @Test
+  void shouldNotSaveAnyWhenFirstIsStale() {
+    helper.registerAccount(ACCOUNT_NUMBER_1, 100);
+    helper.registerAccount(ACCOUNT_NUMBER_2, 200);
+
+    LocalAccount account1 = helper.getAccount(ACCOUNT_NUMBER_1);
+    LocalAccount account1Stale = helper.getAccount(ACCOUNT_NUMBER_1);
+    LocalAccount account2 = helper.getAccount(ACCOUNT_NUMBER_2);
+    helper.localBank.put(
+      account1.deposit(new LocalCurrency(1)));
+
+    ResponseCode response = helper.localBank.putAll(asList(
+      account1Stale.deposit(new LocalCurrency(10)),
+      account2.deposit(new LocalCurrency(10))));
+
+    assertEquals(REENTER_LAST_TRANSACTION, response);
+
+    assertBalanceOfAccount(101, helper.getAccount(ACCOUNT_NUMBER_1));
+    assertBalanceOfAccount(200, helper.getAccount(ACCOUNT_NUMBER_2));
+  }
+
+  @Test
+  void shouldNotSaveAnyWhenLastIsStale() {
+    helper.registerAccount(ACCOUNT_NUMBER_1, 100);
+    helper.registerAccount(ACCOUNT_NUMBER_2, 200);
+
+    LocalAccount account1 = helper.getAccount(ACCOUNT_NUMBER_1);
+    LocalAccount account2 = helper.getAccount(ACCOUNT_NUMBER_2);
+    LocalAccount account2Stale = helper.getAccount(ACCOUNT_NUMBER_2);
+    helper.localBank.put(
+      account2.deposit(new LocalCurrency(1)));
+
+    ResponseCode response = helper.localBank.putAll(asList(
+      account1.deposit(new LocalCurrency(10)),
+      account2Stale.deposit(new LocalCurrency(10))));
+
+    assertEquals(REENTER_LAST_TRANSACTION, response);
+    assertBalanceOfAccount(100, helper.getAccount(ACCOUNT_NUMBER_1));
+    assertBalanceOfAccount(201, helper.getAccount(ACCOUNT_NUMBER_2));
+  }
+
+  @Test
+  void shouldNotAcceptUpdateFromConcurrentThread() throws InterruptedException {
+    AccountNumber accountNumber = new SlowlyHashedAccountNumber(0, 0, 0);
+    helper.registerAccount(accountNumber, 100);
+    LocalAccount account = helper.getAccount(accountNumber);
+
+    LocalAccount updatedAccount1 = account.deposit(new LocalCurrency(20));
+    LocalAccount updatedAccount2 = account.deposit(new LocalCurrency(30));
+
+    Thread thread1 = new Thread(() ->
+      helper.localBank.put(updatedAccount1));
+    Thread thread2 = new Thread(() ->
+      helper.localBank.put(updatedAccount2));
+
+    thread1.start();
+    Thread.yield();
+    thread2.start();
+
+    thread1.join();
+    thread2.join();
+
+    assertBalanceOfAccount(120, helper.getAccount(accountNumber));
+  }
+
+  private static class SlowlyHashedAccountNumber extends AccountNumber {
+    public SlowlyHashedAccountNumber(int part1, int part2, int part3) {
+      super(part1, part2, part3);
+    }
+
+    @Override
+    public int hashCode() {
+      try {
+        Thread.sleep(0, 5);
+      } catch (InterruptedException e) {
+        e.printStackTrace();
+      }
+      return super.hashCode();
+    }
   }
 }

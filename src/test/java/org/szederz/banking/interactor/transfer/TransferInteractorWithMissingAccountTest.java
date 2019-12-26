@@ -1,15 +1,14 @@
-package org.szederz.banking.transaction.transfer;
+package org.szederz.banking.interactor.transfer;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.szederz.banking.transaction.TransactionResponse;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.szederz.banking.transaction.TransactionCode.NO_CREDIT_ACCOUNT;
-import static org.szederz.banking.transaction.transfer.TransferTransactionTestHelper.DONOR_ACCOUNT_NUMBER;
-import static org.szederz.banking.transaction.transfer.TransferTransactionTestHelper.RECIPIENT_ACCOUNT_NUMBER;
+import static org.szederz.banking.interactor.ResponseCode.NO_CREDIT_ACCOUNT;
+import static org.szederz.banking.interactor.transfer.TransferTransactionTestHelper.DONOR_ACCOUNT_NUMBER;
+import static org.szederz.banking.interactor.transfer.TransferTransactionTestHelper.RECIPIENT_ACCOUNT_NUMBER;
 
-class TransferTransactionWithMissingAccountTest {
+class TransferInteractorWithMissingAccountTest {
   private TransferTransactionTestHelper helper = new TransferTransactionTestHelper();
 
   @BeforeEach
@@ -21,7 +20,7 @@ class TransferTransactionWithMissingAccountTest {
 
   @Test
   void respondsWithNoAccountIfBankHoldsNone() {
-    TransactionResponse response = helper.transfer();
+    TransferResponse response = helper.transfer();
 
     assertEquals(NO_CREDIT_ACCOUNT, response.getCode());
   }
@@ -30,7 +29,7 @@ class TransferTransactionWithMissingAccountTest {
   void respondsWithInsufficientFundsWhenWrongAccountIsReferenced() {
     helper.registerAccount(DONOR_ACCOUNT_NUMBER, 0);
 
-    TransactionResponse response = helper.transfer();
+    TransferResponse response = helper.transfer();
 
     assertEquals(NO_CREDIT_ACCOUNT, response.getCode());
   }
@@ -39,7 +38,7 @@ class TransferTransactionWithMissingAccountTest {
   void respondsWithNoCreditAccountIfRecipientIsMissing() {
     helper.registerAccount(RECIPIENT_ACCOUNT_NUMBER, 0);
 
-    TransactionResponse response = helper.transfer();
+    TransferResponse response = helper.transfer();
 
     assertEquals(NO_CREDIT_ACCOUNT, response.getCode());
   }

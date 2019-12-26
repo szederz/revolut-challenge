@@ -1,4 +1,6 @@
-package org.szederz.banking.currency;
+package org.szederz.banking.local.account.currency;
+
+import org.szederz.banking.Currency;
 
 public class LocalCurrency implements Currency {
   private final long amount;
@@ -28,8 +30,8 @@ public class LocalCurrency implements Currency {
 
   @Override
   public boolean equals(Object o) {
-    if (this == o) return true;
-    if (o instanceof Currency) return this.equals((LocalCurrency) o);
+    if(this == o) return true;
+    if(o instanceof Currency) return this.equals((LocalCurrency) o);
 
     return false;
   }

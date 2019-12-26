@@ -1,20 +1,22 @@
-package org.szederz.banking.transaction.transfer;
+package org.szederz.banking.interactor.transfer;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.szederz.banking.Account;
-import org.szederz.banking.AccountIdentifier;
-import org.szederz.banking.currency.LocalCurrency;
-import org.szederz.banking.transaction.TransactionResponse;
+import org.szederz.banking.AccountId;
+import org.szederz.banking.interactor.ResponseCode;
+import org.szederz.banking.local.LocalBank;
+import org.szederz.banking.local.account.currency.LocalCurrency;
+
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.szederz.banking.asserts.AccountAsserts.assertBalanceOfAccount;
-import static org.szederz.banking.transaction.TransactionCode.INSUFFICIENT_FUNDS;
-import static org.szederz.banking.transaction.TransactionCode.TRANSACTION_APPROVED;
-import static org.szederz.banking.transaction.transfer.TransferTransactionTestHelper.DONOR_ACCOUNT_NUMBER;
-import static org.szederz.banking.transaction.transfer.TransferTransactionTestHelper.RECIPIENT_ACCOUNT_NUMBER;
+import static org.szederz.banking.interactor.ResponseCode.*;
+import static org.szederz.banking.interactor.transfer.TransferTransactionTestHelper.DONOR_ACCOUNT_NUMBER;
+import static org.szederz.banking.interactor.transfer.TransferTransactionTestHelper.RECIPIENT_ACCOUNT_NUMBER;
 
-class TransferTransactionTest {
+class TransferInteractorTest {
   private TransferTransactionTestHelper helper = new TransferTransactionTestHelper();
 
   @BeforeEach
@@ -30,7 +32,7 @@ class TransferTransactionTest {
     helper.registerAccount(DONOR_ACCOUNT_NUMBER, 0);
     helper.registerAccount(RECIPIENT_ACCOUNT_NUMBER, 0);
 
-    TransactionResponse response = helper.transfer();
+    TransferResponse response = helper.transfer();
 
     assertEquals(INSUFFICIENT_FUNDS, response.getCode());
     assertBalanceOfAccountWithId(0, DONOR_ACCOUNT_NUMBER);
@@ -43,7 +45,7 @@ class TransferTransactionTest {
     helper.registerAccount(RECIPIENT_ACCOUNT_NUMBER, 20);
     helper.request.ofAmount(new LocalCurrency(20));
 
-    TransactionResponse response = helper.transfer();
+    TransferResponse response = helper.transfer();
 
     assertEquals(INSUFFICIENT_FUNDS, response.getCode());
     assertBalanceOfAccountWithId(10, DONOR_ACCOUNT_NUMBER);
@@ -55,7 +57,7 @@ class TransferTransactionTest {
     helper.registerAccount(DONOR_ACCOUNT_NUMBER, 1);
     helper.registerAccount(RECIPIENT_ACCOUNT_NUMBER, 0);
 
-    TransactionResponse response = helper.transfer();
+    TransferResponse response = helper.transfer();
 
     assertEquals(TRANSACTION_APPROVED, response.getCode());
 
@@ -69,7 +71,7 @@ class TransferTransactionTest {
     helper.registerAccount(RECIPIENT_ACCOUNT_NUMBER, 50);
     helper.request.ofAmount(new LocalCurrency(25));
 
-    TransactionResponse response = helper.transfer();
+    TransferResponse response = helper.transfer();
 
     assertEquals(TRANSACTION_APPROVED, response.getCode());
 
@@ -77,8 +79,26 @@ class TransferTransactionTest {
     assertBalanceOfAccountWithId(75, RECIPIENT_ACCOUNT_NUMBER);
   }
 
-  private void assertBalanceOfAccountWithId(int amount, AccountIdentifier accountId) {
-    assertBalanceOfAccount(amount, helper.getAccount(accountId));
+  @Test
+  void shouldReturnWithBankResponse() {
+    helper.localBank = new LocalBank() {
+      @Override
+      public ResponseCode putAll(List<Account> accounts) {
+        super.putAll(accounts);
+        return REENTER_LAST_TRANSACTION;
+      }
+    };
+    helper.interactor = new TransferInteractor(helper.localBank);
+
+    helper.registerAccount(DONOR_ACCOUNT_NUMBER, 1);
+    helper.registerAccount(RECIPIENT_ACCOUNT_NUMBER, 1);
+
+    TransferResponse response = helper.transfer();
+
+    assertEquals(REENTER_LAST_TRANSACTION, response.getCode());
   }
 
+  private void assertBalanceOfAccountWithId(int amount, AccountId accountId) {
+    assertBalanceOfAccount(amount, helper.getAccount(accountId));
+  }
 }

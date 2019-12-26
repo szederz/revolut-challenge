@@ -1,4 +1,4 @@
-package org.szederz.banking.currency;
+package org.szederz.banking;
 
 public interface Currency {
   long getAmount();

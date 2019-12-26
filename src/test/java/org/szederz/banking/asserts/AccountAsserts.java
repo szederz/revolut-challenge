@@ -1,7 +1,7 @@
 package org.szederz.banking.asserts;
 
 import org.szederz.banking.Account;
-import org.szederz.banking.currency.LocalCurrency;
+import org.szederz.banking.local.account.currency.LocalCurrency;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
