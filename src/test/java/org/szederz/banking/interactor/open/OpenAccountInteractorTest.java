@@ -49,11 +49,6 @@ class OpenAccountInteractorTest {
     assertEquals(new LocalCurrency(10), account.getBalance());
   }
 
-  private Account getAccountFrom(OpenAccountResponse response) {
-    return response.getAccount()
-      .orElseThrow(() -> new AssertionError("Response does not contain account"));
-  }
-
   @Test
   void shouldOpenAccountWithNonExistingAccountNumber() {
     helper.request
@@ -78,5 +73,10 @@ class OpenAccountInteractorTest {
 
     assertEquals(DUPLICATE_TRANSACTION, response.getCode());
     assertEquals(ACCOUNT_NUMBER_1, helper.getAccount(ACCOUNT_NUMBER_1).getAccountId());
+  }
+
+  private Account getAccountFrom(OpenAccountResponse response) {
+    return response.getAccount()
+      .orElseThrow(() -> new AssertionError("Response does not contain account"));
   }
 }

@@ -5,7 +5,7 @@ import org.szederz.banking.local.BankTestHelper;
 import org.szederz.banking.local.account.LocalAccount;
 
 public class OpenAccountInteractorTestHelper extends BankTestHelper {
-  public OpenAccountInteractor interactor = new OpenAccountInteractor(localBank, this::createAccountFrom);
+  public OpenAccountInteractor interactor = new OpenAccountInteractor(bank, this::createAccountFrom);
   public OpenAccountRequest request = new OpenAccountRequest();
 
   public OpenAccountResponse openAccount() {

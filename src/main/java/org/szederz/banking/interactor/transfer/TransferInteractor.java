@@ -42,7 +42,7 @@ public class TransferInteractor {
       return INSUFFICIENT_FUNDS;
     }
 
-    return bank.putAll(asList(
+    return bank.updateAll(asList(
       donor.withdraw(amountToTransfer),
       recipient.deposit(amountToTransfer)
     ));

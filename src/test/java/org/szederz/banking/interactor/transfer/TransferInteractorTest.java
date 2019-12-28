@@ -81,14 +81,14 @@ class TransferInteractorTest {
 
   @Test
   void shouldReturnWithBankResponse() {
-    helper.localBank = new LocalBank() {
+    helper.bank = new LocalBank() {
       @Override
-      public ResponseCode putAll(List<Account> accounts) {
-        super.putAll(accounts);
+      public ResponseCode updateAll(List<Account> accounts) {
+        super.updateAll(accounts);
         return REENTER_LAST_TRANSACTION;
       }
     };
-    helper.interactor = new TransferInteractor(helper.localBank);
+    helper.interactor = new TransferInteractor(helper.bank);
 
     helper.registerAccount(DONOR_ACCOUNT_NUMBER, 1);
     helper.registerAccount(RECIPIENT_ACCOUNT_NUMBER, 1);

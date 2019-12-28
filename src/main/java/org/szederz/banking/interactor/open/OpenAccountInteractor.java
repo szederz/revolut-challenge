@@ -1,12 +1,11 @@
 package org.szederz.banking.interactor.open;
 
 import org.szederz.banking.Account;
-import org.szederz.banking.AccountId;
 import org.szederz.banking.Bank;
+import org.szederz.banking.interactor.ResponseCode;
 
 import java.util.function.Function;
 
-import static org.szederz.banking.interactor.ResponseCode.DUPLICATE_TRANSACTION;
 import static org.szederz.banking.interactor.ResponseCode.TRANSACTION_APPROVED;
 
 public class OpenAccountInteractor {
@@ -22,16 +21,13 @@ public class OpenAccountInteractor {
   }
 
   public OpenAccountResponse openAccount(OpenAccountRequest request) {
-    AccountId accountId = request.getAccountId();
+    Account account = accountBuilder.apply(request);
+    ResponseCode response = bank.create(account);
 
-    if(bank.get(accountId).isPresent()) {
-      return new OpenAccountResponse(DUPLICATE_TRANSACTION);
+    if(response == TRANSACTION_APPROVED) {
+      return new OpenAccountResponse(response, account);
     }
 
-    Account account = accountBuilder.apply(request);
-
-    bank.put(account);
-
-    return new OpenAccountResponse(TRANSACTION_APPROVED, account);
+    return new OpenAccountResponse(response);
   }
 }

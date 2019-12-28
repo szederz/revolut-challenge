@@ -11,24 +11,22 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import static org.szederz.banking.collections.Pair.zip;
-import static org.szederz.banking.interactor.ResponseCode.REENTER_LAST_TRANSACTION;
-import static org.szederz.banking.interactor.ResponseCode.TRANSACTION_APPROVED;
+import static org.szederz.banking.interactor.ResponseCode.*;
 
 public class LocalBank implements Bank {
   private final Object mutex = new Object();
   private final Map<AccountId, LocalAccount> accounts = new HashMap<>();
 
   @Override
-  public ResponseCode putAll(List<Account> accounts) {
+  public ResponseCode createAll(List<Account> accounts) {
+    List<LocalAccount> localAccounts = asLocalAccounts(accounts);
+
     synchronized(mutex) {
-      List<Pair<LocalAccount, Optional<LocalAccount>>> updatedAndAccounts =
-        zip(asLocalAccounts(accounts), getAny(getIdsOf(accounts)));
+      for(Account account : accounts)
+        if(this.accounts.containsKey(account.getAccountId()))
+          return DUPLICATE_TRANSACTION;
 
-      if(isAnyStale(updatedAndAccounts)) {
-        return REENTER_LAST_TRANSACTION;
-      }
-
-      this.accounts.putAll(accountUpdatesFrom(updatedAndAccounts));
+      this.accounts.putAll(createMapFrom(localAccounts));
 
       return TRANSACTION_APPROVED;
     }
@@ -36,7 +34,61 @@ public class LocalBank implements Bank {
 
   @Override
   public Optional<List<Account>> getAll(List<AccountId> ids) {
-    List<Account> accounts = new ArrayList<>(ids.size());
+    return getAllLocal(ids).map(l -> new ArrayList<>(l));
+  }
+
+  @Override
+  public ResponseCode updateAll(List<Account> accounts) {
+    List<LocalAccount> accountsToUpdate = asLocalAccounts(accounts);
+    List<AccountId> ids = getIdsOf(accounts);
+
+    synchronized(mutex) {
+      Optional<List<LocalAccount>> savedAccounts = getAllLocal(ids);
+
+      if(!savedAccounts.isPresent())
+        return NO_CREDIT_ACCOUNT;
+
+      if(isAnyStale(zip(accountsToUpdate, savedAccounts.get())))
+        return REENTER_LAST_TRANSACTION;
+
+      this.accounts.putAll(
+        createMapFrom(
+          allWithIncreasedVersion(accountsToUpdate)));
+
+      return TRANSACTION_APPROVED;
+    }
+  }
+
+  @Override
+  public ResponseCode remove(Account accountToRemove) {
+    synchronized(mutex) {
+      return getLocal(accountToRemove.getAccountId())
+        .map(savedAccount ->
+          this.removeExistingAccount(accountToRemove, savedAccount))
+        .orElse(NO_CREDIT_ACCOUNT);
+    }
+  }
+
+  private Map<AccountId, LocalAccount> createMapFrom(List<LocalAccount> accounts) {
+    Map<AccountId, LocalAccount> localAccounts = new HashMap<>();
+
+    for(Account account : accounts) {
+      localAccounts.put(account.getAccountId(), asLocalAccount(account));
+    }
+
+    return localAccounts;
+  }
+
+  private List<LocalAccount> allWithIncreasedVersion(List<LocalAccount> accountToUpdate) {
+    List<LocalAccount> versionUpdated = new ArrayList<>();
+    for(LocalAccount account : accountToUpdate) {
+      versionUpdated.add(account.withVersion(account.getVersion() + 1));
+    }
+    return versionUpdated;
+  }
+
+  private Optional<List<LocalAccount>> getAllLocal(List<AccountId> ids) {
+    List<LocalAccount> accounts = new ArrayList<>(ids.size());
 
     for(AccountId id : ids) {
       Optional<LocalAccount> optionalAccount = getLocal(id);
@@ -50,21 +102,27 @@ public class LocalBank implements Bank {
     return Optional.of(accounts);
   }
 
-  private List<Optional<LocalAccount>> getAny(List<AccountId> ids) {
-    List<Optional<LocalAccount>> optionalAccounts = new ArrayList<>(ids.size());
-
-    for(AccountId id : ids) {
-      optionalAccounts.add(getLocal(id));
+  private ResponseCode removeExistingAccount(Account accountToRemove, LocalAccount savedAccount) {
+    if(accountToRemove.hasDifferentVersionFrom(savedAccount)) {
+      return REENTER_LAST_TRANSACTION;
     }
 
-    return optionalAccounts;
+    accounts.remove(accountToRemove.getAccountId());
+
+    return TRANSACTION_APPROVED;
   }
 
   public Optional<LocalAccount> getLocal(AccountId identifier) {
-    if(accounts.containsKey(identifier)) {
-      return Optional.of(accounts.get(identifier));
+    LocalAccount account;
+
+    synchronized(mutex) {
+      account = accounts.get(identifier);
     }
-    return Optional.empty();
+
+    if(account == null)
+      return Optional.empty();
+
+    return Optional.of(account);
   }
 
   private List<LocalAccount> asLocalAccounts(List<Account> accounts) {
@@ -80,45 +138,16 @@ public class LocalBank implements Bank {
     return new LocalAccount(account.getAccountId(), account.getBalance());
   }
 
-  private Map<AccountId, LocalAccount> accountUpdatesFrom(
-    List<Pair<LocalAccount, Optional<LocalAccount>>> newAndOldAccounts
-  ) {
-    Map<AccountId, LocalAccount> accountUpdates =
-      new HashMap<>(newAndOldAccounts.size());
-
-    newAndOldAccounts.forEach(newAndOldAccount -> {
-      LocalAccount account = accountUpdateFrom(newAndOldAccount);
-      accountUpdates.put(account.getAccountId(), account);
-    });
-
-    return accountUpdates;
-  }
-
-  private LocalAccount accountUpdateFrom(
-    Pair<LocalAccount, Optional<LocalAccount>> newAndOldAccount
-  ) {
-    LocalAccount account = asLocalAccount(newAndOldAccount.getLeft());
-
-    if(newAndOldAccount.getRight().isPresent())
-      return account.withIncreasedVersion();
-
-    return account;
-  }
-
   private boolean isAnyStale(
-    List<Pair<LocalAccount, Optional<LocalAccount>>> newAndOldAccounts
+    List<Pair<LocalAccount, LocalAccount>> newAndOldAccounts
   ) {
     return newAndOldAccounts.stream()
-      .anyMatch(this::isStale);
-  }
+      .anyMatch(newAndOldAccount -> {
+        LocalAccount newAccount = newAndOldAccount.getLeft();
+        LocalAccount oldAccount = newAndOldAccount.getRight();
 
-  private boolean isStale(
-    Pair<LocalAccount, Optional<LocalAccount>> newAndOldAccount
-  ) {
-    return newAndOldAccount.getRight()
-      .filter(oldAccount ->
-        newAndOldAccount.getLeft().getVersion() != oldAccount.getVersion())
-      .isPresent();
+        return newAccount.hasDifferentVersionFrom(oldAccount);
+      });
   }
 
   private List<AccountId> getIdsOf(List<Account> accounts) {

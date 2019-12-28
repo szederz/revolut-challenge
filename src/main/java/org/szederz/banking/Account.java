@@ -1,6 +1,6 @@
 package org.szederz.banking;
 
-public interface Account {
+public interface Account extends Versioned {
   AccountId getAccountId();
 
   Currency getBalance();

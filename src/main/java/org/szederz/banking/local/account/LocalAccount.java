@@ -3,12 +3,18 @@ package org.szederz.banking.local.account;
 import org.szederz.banking.Account;
 import org.szederz.banking.AccountId;
 import org.szederz.banking.Currency;
-import org.szederz.banking.local.Versioned;
+import org.szederz.banking.local.account.currency.LocalCurrency;
 
-public class LocalAccount implements Account, Versioned {
+public class LocalAccount implements Account {
   private AccountId accountId;
   private Currency balance;
   private long version;
+
+  public LocalAccount(AccountId accountId) {
+    this.accountId = accountId;
+    this.balance = new LocalCurrency(0);
+    this.version = 0L;
+  }
 
   public LocalAccount(AccountId accountId, Currency balance) {
     this.accountId = accountId;
@@ -51,9 +57,9 @@ public class LocalAccount implements Account, Versioned {
   }
 
   @Override
-  public LocalAccount withIncreasedVersion() {
+  public LocalAccount withVersion(long version) {
     LocalAccount account = new LocalAccount(this);
-    account.version += 1L;
+    account.version = version;
     return account;
   }
 }

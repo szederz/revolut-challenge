@@ -11,19 +11,23 @@ public class BankTestHelper {
   public static final AccountId ACCOUNT_NUMBER_2 =
     new AccountNumber(87654321, 87654321);
 
-  public LocalBank localBank = new LocalBank();
+  public LocalBank bank = new LocalBank();
+
+  public void registerAccount(AccountId accountId) {
+    this.registerAccount(accountId, 0);
+  }
 
   public void registerAccount(AccountId accountId, int balance) {
-    localBank.put(new LocalAccount(accountId, new LocalCurrency(balance)));
+    bank.create(new LocalAccount(accountId, new LocalCurrency(balance)));
   }
 
   public LocalAccount getAccount(AccountId accountId) {
-    return localBank.getLocal(accountId)
+    return bank.getLocal(accountId)
       .orElseThrow(() -> new AssertionError(
         String.format("Could not find account with id %s", accountId)));
   }
 
   public boolean hasAccount(AccountId accountId) {
-    return localBank.get(accountId).isPresent();
+    return bank.get(accountId).isPresent();
   }
 }
