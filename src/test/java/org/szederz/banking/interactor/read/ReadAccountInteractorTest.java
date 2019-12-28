@@ -19,6 +19,7 @@ class ReadAccountInteractorTest {
     assertEquals(NO_CREDIT_ACCOUNT, response.getCode());
   }
 
+  @Test
   void shouldReturnWithAccountWhenPresent() {
     helper.request.withAccountId(ACCOUNT_NUMBER_1);
     helper.registerAccount(ACCOUNT_NUMBER_1);
