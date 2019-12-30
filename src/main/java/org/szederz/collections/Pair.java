@@ -1,4 +1,4 @@
-package org.szederz.banking.collections;
+package org.szederz.collections;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -1,9 +1,9 @@
-package org.szederz.banking.local.account;
+package org.szederz.banking.components.local.account;
 
 import org.szederz.banking.Account;
 import org.szederz.banking.AccountId;
 import org.szederz.banking.Currency;
-import org.szederz.banking.local.account.currency.LocalCurrency;
+import org.szederz.banking.components.local.account.currency.LocalCurrency;
 
 public class LocalAccount implements Account {
   private AccountId accountId;

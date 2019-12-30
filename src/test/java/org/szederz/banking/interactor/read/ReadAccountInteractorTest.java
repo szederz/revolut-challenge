@@ -4,9 +4,9 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.szederz.banking.components.local.BankTestHelper.ACCOUNT_NUMBER_1;
 import static org.szederz.banking.interactor.ResponseCode.NO_CREDIT_ACCOUNT;
 import static org.szederz.banking.interactor.ResponseCode.TRANSACTION_APPROVED;
-import static org.szederz.banking.local.BankTestHelper.ACCOUNT_NUMBER_1;
 
 class ReadAccountInteractorTest {
   ReadAccountInteractorTestHelper helper = new ReadAccountInteractorTestHelper();

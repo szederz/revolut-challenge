@@ -1,7 +1,7 @@
 package org.szederz.banking.interactor.transfer;
 
 import org.szederz.banking.AccountId;
-import org.szederz.banking.local.BankTestHelper;
+import org.szederz.banking.components.local.BankTestHelper;
 
 public class TransferTransactionTestHelper extends BankTestHelper {
   public static final AccountId DONOR_ACCOUNT_NUMBER = ACCOUNT_NUMBER_1;

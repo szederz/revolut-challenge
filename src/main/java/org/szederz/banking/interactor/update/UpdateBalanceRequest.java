@@ -2,7 +2,7 @@ package org.szederz.banking.interactor.update;
 
 import org.szederz.banking.AccountId;
 import org.szederz.banking.Currency;
-import org.szederz.banking.local.account.currency.LocalCurrency;
+import org.szederz.banking.components.local.account.currency.LocalCurrency;
 
 public class UpdateBalanceRequest {
   private AccountId accountId;

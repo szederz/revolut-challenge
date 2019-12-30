@@ -1,13 +1,17 @@
 package org.szederz.banking.interactor.update;
 
 import org.junit.jupiter.api.Test;
-import org.szederz.banking.local.account.currency.LocalCurrency;
+import org.szederz.banking.Account;
+import org.szederz.banking.components.local.account.currency.LocalCurrency;
+
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.szederz.banking.asserts.AccountAsserts.assertBalanceOfAccount;
+import static org.szederz.banking.components.local.BankTestHelper.ACCOUNT_NUMBER_1;
+import static org.szederz.banking.components.local.BankTestHelper.ACCOUNT_NUMBER_2;
 import static org.szederz.banking.interactor.ResponseCode.*;
-import static org.szederz.banking.local.BankTestHelper.ACCOUNT_NUMBER_1;
-import static org.szederz.banking.local.BankTestHelper.ACCOUNT_NUMBER_2;
 
 class UpdateBalanceInteractorTest {
 
@@ -36,6 +40,10 @@ class UpdateBalanceInteractorTest {
 
     assertEquals(TRANSACTION_APPROVED, response.getCode());
     assertBalanceOfAccount(10, helper.getAccount(ACCOUNT_NUMBER_1));
+    Optional<Account> optionalAccount = response.getAccount();
+    assertTrue(optionalAccount.isPresent());
+    assertBalanceOfAccount(10, optionalAccount.get());
+    assertEquals(1, optionalAccount.get().getVersion());
   }
 
   @Test

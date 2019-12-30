@@ -3,14 +3,14 @@ package org.szederz.banking.interactor.open;
 import org.junit.jupiter.api.Test;
 import org.szederz.banking.Account;
 import org.szederz.banking.AccountId;
-import org.szederz.banking.local.account.LocalAccount;
-import org.szederz.banking.local.account.currency.LocalCurrency;
+import org.szederz.banking.components.local.account.LocalAccount;
+import org.szederz.banking.components.local.account.currency.LocalCurrency;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.szederz.banking.components.local.BankTestHelper.ACCOUNT_NUMBER_1;
+import static org.szederz.banking.components.local.BankTestHelper.ACCOUNT_NUMBER_2;
 import static org.szederz.banking.interactor.ResponseCode.DUPLICATE_TRANSACTION;
 import static org.szederz.banking.interactor.ResponseCode.TRANSACTION_APPROVED;
-import static org.szederz.banking.local.BankTestHelper.ACCOUNT_NUMBER_1;
-import static org.szederz.banking.local.BankTestHelper.ACCOUNT_NUMBER_2;
 
 class OpenAccountInteractorTest {
   private OpenAccountInteractorTestHelper helper = new OpenAccountInteractorTestHelper();

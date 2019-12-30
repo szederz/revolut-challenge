@@ -1,9 +1,9 @@
-package org.szederz.banking.local;
+package org.szederz.banking.components.local;
 
 import org.szederz.banking.AccountId;
-import org.szederz.banking.local.account.LocalAccount;
-import org.szederz.banking.local.account.currency.LocalCurrency;
-import org.szederz.banking.local.account.identifier.AccountNumber;
+import org.szederz.banking.components.local.account.LocalAccount;
+import org.szederz.banking.components.local.account.currency.LocalCurrency;
+import org.szederz.banking.components.local.account.identifier.AccountNumber;
 
 public class BankTestHelper {
   public static final AccountId ACCOUNT_NUMBER_1 =

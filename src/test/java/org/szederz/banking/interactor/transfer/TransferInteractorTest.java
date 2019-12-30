@@ -4,9 +4,9 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.szederz.banking.Account;
 import org.szederz.banking.AccountId;
+import org.szederz.banking.components.local.LocalBank;
+import org.szederz.banking.components.local.account.currency.LocalCurrency;
 import org.szederz.banking.interactor.ResponseCode;
-import org.szederz.banking.local.LocalBank;
-import org.szederz.banking.local.account.currency.LocalCurrency;
 
 import java.util.List;
 

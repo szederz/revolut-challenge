@@ -1,11 +1,11 @@
 package org.szederz.banking.interactor.close;
 
 import org.junit.jupiter.api.Test;
-import org.szederz.banking.local.account.LocalAccount;
+import org.szederz.banking.components.local.account.LocalAccount;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.szederz.banking.components.local.BankTestHelper.ACCOUNT_NUMBER_1;
 import static org.szederz.banking.interactor.ResponseCode.*;
-import static org.szederz.banking.local.BankTestHelper.ACCOUNT_NUMBER_1;
 
 class CloseAccountInteractorTest {
   private CloseAccountInteractorTestHelper helper =

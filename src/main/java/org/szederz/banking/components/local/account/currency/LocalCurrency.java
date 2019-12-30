@@ -1,4 +1,4 @@
-package org.szederz.banking.local.account.currency;
+package org.szederz.banking.components.local.account.currency;
 
 import org.szederz.banking.Currency;
 

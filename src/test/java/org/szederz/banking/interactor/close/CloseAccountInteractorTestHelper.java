@@ -1,9 +1,9 @@
 package org.szederz.banking.interactor.close;
 
 import org.szederz.banking.Account;
+import org.szederz.banking.components.local.BankTestHelper;
+import org.szederz.banking.components.local.account.LocalAccount;
 import org.szederz.banking.interactor.open.OpenAccountRequest;
-import org.szederz.banking.local.BankTestHelper;
-import org.szederz.banking.local.account.LocalAccount;
 
 public class CloseAccountInteractorTestHelper extends BankTestHelper {
   public CloseAccountInteractor interactor = new CloseAccountInteractor(bank);

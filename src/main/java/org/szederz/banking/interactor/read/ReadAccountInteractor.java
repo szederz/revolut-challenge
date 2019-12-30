@@ -1,6 +1,6 @@
 package org.szederz.banking.interactor.read;
 
-import org.szederz.banking.local.LocalBank;
+import org.szederz.banking.components.local.LocalBank;
 
 import static org.szederz.banking.interactor.ResponseCode.NO_CREDIT_ACCOUNT;
 import static org.szederz.banking.interactor.ResponseCode.TRANSACTION_APPROVED;
