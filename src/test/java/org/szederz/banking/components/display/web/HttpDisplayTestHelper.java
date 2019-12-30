@@ -3,13 +3,12 @@ package org.szederz.banking.components.display.web;
 import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.util.Random;
 
 import static org.szederz.banking.components.display.web.HttpMethod.*;
 import static org.szederz.banking.components.entries.HttpLocalAccountEntry.configureDisplay;
 
 class HttpDisplayTestHelper {
-  public HttpDisplay server = configureDisplay(new Random().nextInt(1024) + 1024);
+  public HttpDisplay server = configureDisplay(18088);
   public HttpURLConnection connection;
 
   public void connect(String endpoint) throws IOException {
