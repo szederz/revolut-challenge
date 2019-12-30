@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.szederz.banking.components.display.web.HttpMethod.*;
 import static org.szederz.banking.components.entries.HttpLocalAccountEntry.configureDisplay;
 
@@ -41,7 +42,7 @@ class HttpDisplayTestHelper {
       POST,
       conn -> {
         conn.setDoOutput(true);
-        conn.getOutputStream().write(account.getBytes());
+        conn.getOutputStream().write(account.getBytes(UTF_8));
       },
       assertions);
   }
@@ -56,7 +57,7 @@ class HttpDisplayTestHelper {
       PUT,
       conn -> {
         conn.setDoOutput(true);
-        conn.getOutputStream().write(update.getBytes());
+        conn.getOutputStream().write(update.getBytes(UTF_8));
       },
       assertions);
   }
@@ -76,7 +77,7 @@ class HttpDisplayTestHelper {
           "\"from\": \"" + account1 + "\"," +
           "\"to\": \"" + account2 + "\"," +
           "\"amount\": " + amount +
-          "}").getBytes());
+          "}").getBytes(UTF_8));
       },
       assertions);
   }
